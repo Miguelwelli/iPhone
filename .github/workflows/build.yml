@@ -1,0 +1,58 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, "arena/**" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          LATEST_XCODE=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$LATEST_XCODE" ]; then
+            echo "Selecting $LATEST_XCODE"
+            sudo xcode-select -s "$LATEST_XCODE"
+          fi
+          xcodebuild -version
+          swift --version
+
+      - name: Install xtool
+        run: |
+          brew install --cask xtool-org/tap/xtool || brew install xtool-org/tap/xtool
+          xtool --version || xtool --help
+
+      - name: Build IPA
+        run: |
+          mkdir -p build
+          if xtool dev build --ipa; then
+            echo "Built IPA directly with xtool dev build --ipa"
+            cp xtool/*.ipa build/ 2>/dev/null || true
+          elif xtool dev build; then
+            echo "Built .app with xtool dev build"
+          fi
+
+      - name: Package IPA (fallback)
+        run: |
+          mkdir -p build
+          if ! ls build/*.ipa 1>/dev/null 2>&1; then
+            if [ -d "xtool/TesteApp.app" ]; then
+              mkdir -p build/Payload
+              cp -R xtool/TesteApp.app build/Payload/
+              (cd build && zip -r TesteApp.ipa Payload)
+            fi
+          fi
+          ls -lh build/*.ipa
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TesteApp-IPA
+          path: build/*.ipa
+          if-no-files-found: error
