@@ -3,19 +3,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "TesteApp",
+    name: "NexusWZ",
     platforms: [
         .iOS(.v17),
     ],
     products: [
         .library(
-            name: "TesteApp",
-            targets: ["TesteApp"]
+            name: "NexusWZ",
+            targets: ["NexusWZ"]
         ),
     ],
     targets: [
         .target(
-            name: "TesteApp"
+            name: "NexusWZ"
         ),
     ]
 )

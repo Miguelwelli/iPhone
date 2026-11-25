@@ -42,17 +42,20 @@ jobs:
         run: |
           mkdir -p build
           if ! ls build/*.ipa 1>/dev/null 2>&1; then
-            if [ -d "xtool/TesteApp.app" ]; then
-              mkdir -p build/Payload
-              cp -R xtool/TesteApp.app build/Payload/
-              (cd build && zip -r TesteApp.ipa Payload)
-            fi
+            for app_dir in xtool/*.app; do
+              if [ -d "$app_dir" ]; then
+                app_name=$(basename "$app_dir" .app)
+                mkdir -p build/Payload
+                cp -R "$app_dir" build/Payload/
+                (cd build && zip -r "${app_name}.ipa" Payload)
+              fi
+            done
           fi
           ls -lh build/*.ipa
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TesteApp-IPA
+          name: NexusWZ-IPA
           path: build/*.ipa
           if-no-files-found: error

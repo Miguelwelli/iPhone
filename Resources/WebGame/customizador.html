@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Estúdio de Operadores | NEXUS WZ</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#080f25;color:#f7f9ff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 25% 0%,#123c70 0,transparent 48%),#080f25}button,input,select{font:inherit}button{cursor:pointer}header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(18px,env(safe-area-inset-top)) max(clamp(16px,4vw,56px),env(safe-area-inset-right)) 18px max(clamp(16px,4vw,56px),env(safe-area-inset-left));border-bottom:1px solid #ffffff1c;background:#091632d9}header strong{font-size:20px;letter-spacing:.04em}header strong span{color:#ffd14b}header a{color:#cbd9ed;text-decoration:none;font-size:13px;font-weight:800}main{max-width:1300px;margin:auto;padding:30px clamp(16px,4vw,50px) 45px}.eyebrow{font-size:11px;letter-spacing:.2em;font-weight:900;color:#70deec}h1{font-size:clamp(28px,4vw,48px);line-height:1.05;margin:8px 0}p{color:#aebdd3;line-height:1.5;margin:8px 0}.layout{display:grid;grid-template-columns:minmax(280px,1fr) minmax(320px,1fr);gap:22px;margin-top:25px}.panel{border:1px solid #6689b04a;background:#101e3aeb;border-radius:20px;box-shadow:0 14px 45px #0004}.preview{padding:16px;display:flex;flex-direction:column;gap:14px}.stage{position:relative;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 25%,#3092c1,#164678 55%,#15264c);min-height:390px;display:flex;align-items:center;justify-content:center}.stage:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 85px,#ffffff09 86px 88px);pointer-events:none}.stage canvas{position:relative;width:min(100%,500px);height:auto;display:block}.preview-label{position:absolute;top:14px;left:16px;font-size:10px;font-weight:900;letter-spacing:.16em;color:#d6faff}.preview-caption{text-align:center;color:#aebdd3;font-size:12px}.actions{display:flex;flex-wrap:wrap;gap:8px}.action{flex:1;min-width:130px;border:0;border-radius:10px;background:#ffd24b;color:#3d2b00;font-weight:900;padding:12px}.action.secondary{background:#243a5b;color:#e1ecfa;border:1px solid #6b84a6}.controls{padding:20px}.section-title{display:flex;align-items:center;gap:10px;color:#fff;font-size:13px;font-weight:900;letter-spacing:.08em;margin:4px 0 13px}.section-title:before{content:"";width:4px;height:18px;border-radius:8px;background:#ffd24b}.group{padding:0 0 17px;margin:0 0 17px;border-bottom:1px solid #ffffff17}.group:last-child{border:0;margin:0;padding:0}.color-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin:8px 0;color:#d8e3f3;font-size:13px;font-weight:700}.color-input{width:47px;height:32px;padding:2px;border:1px solid #90a8c2;border-radius:7px;background:#172b48;cursor:pointer}.palette{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.swatch{width:25px;height:25px;border:2px solid #ffffff70;border-radius:50%;padding:0}.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.option{border:1px solid #7188a5;border-radius:9px;background:#203452;color:#dbe6f7;padding:10px 5px;font-size:12px;font-weight:800}.option.active{border-color:#ffd24b;background:#624a1c;color:#ffdf6a;box-shadow:0 0 0 1px #ffd24b}.name-input{width:100%;border:1px solid #6c829e;border-radius:9px;background:#0a1730;color:white;padding:11px}.hint{font-size:12px;color:#a7b9ce}.status{min-height:1.4em;color:#8ee8c0;font-size:12px;margin:0}.fine{margin-top:18px;font-size:12px;color:#93a9c5}.file-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}@media(max-width:760px){main{padding-top:22px}.layout{grid-template-columns:1fr}.stage{min-height:280px}.stage canvas{width:min(100%,360px)}.controls{padding:16px}header strong{font-size:16px}}@media(max-width:380px){.options{grid-template-columns:repeat(2,1fr)}header a{font-size:11px}}
+</style>
+</head>
+<body>
+<header><strong>◆ NEXUS <span>WZ</span> / ESTÚDIO</strong><a href="./index.html">← VOLTAR AO JOGO</a></header>
+<main>
+<div class="eyebrow">CRIE SEU OPERADOR</div><h1>Seu visual. Suas regras.</h1>
+<p>Combine cores e acessórios, baixe sua criação e mande no chat. Vamos transformá-la em inspiração para o jogo!</p>
+<div class="layout">
+<section class="panel preview" aria-label="Prévia do operador">
+<div class="stage"><div class="preview-label">PRÉVIA DO OPERADOR</div><canvas id="canvas" width="800" height="800" aria-label="Ilustração da skin personalizada"></canvas></div>
+<div class="preview-caption">Uma ilustração de referência — não é um modelo 3D jogável.</div>
+<div class="actions"><button id="download-png" class="action">⬇ BAIXAR IMAGEM</button><button id="download-json" class="action secondary">⬇ BAIXAR PROJETO</button><button id="import" class="action secondary">↥ ABRIR PROJETO</button><input id="file" class="file-input" type="file" accept=".json,application/json"></div>
+<p class="status" id="status" aria-live="polite"></p>
+</section>
+<section class="panel controls" aria-label="Personalizar operador">
+<div class="group"><div class="section-title">IDENTIDADE</div><label for="name" class="hint">Nome da sua criação</label><input class="name-input" id="name" maxlength="24" value="MEU OPERADOR" autocomplete="off"></div>
+<div class="group"><div class="section-title">CORES</div><div id="colors"></div><div class="hint">Toque no quadrado para escolher qualquer cor ou use os atalhos abaixo.</div><div class="palette" id="palette"></div><div class="hint" id="color-hint">Os atalhos mudam a cor do uniforme.</div></div>
+<div class="group"><div class="section-title">CAPACETE</div><div class="options" id="helmet"></div></div>
+<div class="group"><div class="section-title">ACESSÓRIO</div><div class="options" id="accessory"></div></div>
+<div class="group"><div class="section-title">EMBLEMA</div><div class="options" id="emblem"></div></div>
+<div class="group"><div class="section-title">FUNDO DA IMAGEM</div><div class="options" id="background"></div></div>
+</section>
+</div><p class="fine">O arquivo de projeto guarda suas escolhas para editar depois. A imagem serve como referência; ela não altera automaticamente as skins do jogo.</p>
+</main>
+<script>
+(() => {
+'use strict';
+const defaults={name:'MEU OPERADOR',uniform:'#56763d',helmetColor:'#172b32',visor:'#22d3ee',detail:'#f1bb3e',helmet:'tatico',accessory:'nenhum',emblem:'estrela',background:'azul'};
+let skin={...defaults};
+const groups={helmet:[['tatico','Tático'],['arredondado','Arredondado'],['capuz','Capuz']], accessory:[['nenhum','Nenhum'],['antena','Antena'],['chifres','Chifres'],['fone','Fone'],['oculos','Óculos'],['coroa','Coroa']],emblem:[['nenhum','Nenhum'],['estrela','Estrela'],['cruz','Cruz'],['raio','Raio'],['escudo','Escudo'],['caveira','Caveira']],background:[['azul','Azul'],['deserto','Deserto'],['noite','Noite']]};
+const colorFields=[['uniform','Uniforme'],['helmetColor','Capacete'],['visor','Visor'],['detail','Detalhes']];
+const palette=['#56763d','#d2a366','#273b5e','#efe8d6','#9a57b4','#e35454','#f6bc30','#22d3ee','#243043','#ffffff'];
+const colors=document.getElementById('colors'); const canvas=document.getElementById('canvas'); const ctx=canvas.getContext('2d'); const status=document.getElementById('status');
+const $=id=>document.getElementById(id);
+colorFields.forEach(([key,label])=>{const row=document.createElement('label'); row.className='color-row';row.innerHTML=`<span>${label}</span><input class="color-input" type="color" aria-label="Cor de ${label}" data-color="${key}">`; colors.appendChild(row);row.querySelector('input').addEventListener('input',e=>{skin[key]=e.target.value;draw()})});
+palette.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.title='Uniforme '+c;b.setAttribute('aria-label','Uniforme '+c);b.addEventListener('click',()=>{skin.uniform=c;update()});$('palette').appendChild(b)});
+Object.entries(groups).forEach(([key,opts])=>{opts.forEach(([value,label])=>{const b=document.createElement('button');b.className='option';b.textContent=label;b.dataset.value=value;b.addEventListener('click',()=>{skin[key]=value;update()});$(key).appendChild(b)})});
+$('name').addEventListener('input',e=>{skin.name=e.target.value.slice(0,24);draw()});
+function update(){ $('name').value=skin.name; colorFields.forEach(([key])=>{document.querySelector(`[data-color="${key}"]`).value=skin[key]});Object.keys(groups).forEach(key=>$(key).querySelectorAll('button').forEach(b=>{const active=b.dataset.value===skin[key];b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))})); draw() }
+function rect(x,y,w,h,color,stroke='#101b2a',line=7){ctx.fillStyle=color;ctx.strokeStyle=stroke;ctx.lineWidth=line;ctx.lineJoin='round';ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h)}
+function path(points,color,stroke='#101b2a',line=7){ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);points.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.lineWidth=line;ctx.strokeStyle=stroke;ctx.lineJoin='round';ctx.stroke()}
+function star(cx,cy,r,n=5){ctx.beginPath();for(let i=0;i<n*2;i++){let a=-Math.PI/2+i*Math.PI/n;let d=i%2?r*.46:r;let x=cx+Math.cos(a)*d,y=cy+Math.sin(a)*d;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.fill()}
+function draw(){
+const bg={azul:['#50c5e6','#174575'],deserto:['#ffbd6a','#a64e36'],noite:['#5e54a2','#15203f']}[skin.background];let gradient=ctx.createLinearGradient(0,0,0,800);gradient.addColorStop(0,bg[0]);gradient.addColorStop(1,bg[1]);ctx.fillStyle=gradient;ctx.fillRect(0,0,800,800);
+ctx.fillStyle='#ffffff19';for(let i=0;i<9;i++){ctx.beginPath();ctx.arc((i*137+68)%800,(i*193+42)%600,5+(i%3)*4,0,Math.PI*2);ctx.fill()}
+ctx.fillStyle='#00000030';ctx.beginPath();ctx.ellipse(400,685,220,43,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#b8d4e6';ctx.beginPath();ctx.ellipse(400,660,213,44,0,0,Math.PI*2);ctx.fill();ctx.lineWidth=10;ctx.strokeStyle=skin.detail;ctx.stroke();
+// Pernas, braços e colete com formas simples, próprias do estúdio.
+rect(300,483,90,155,skin.helmetColor);rect(410,483,90,155,skin.helmetColor);rect(291,612,105,32,'#17202d');rect(405,612,105,32,'#17202d');
+path([[284,338],[218,350],[195,470],[261,487],[299,400]],skin.uniform);path([[516,338],[582,350],[605,470],[539,487],[501,400]],skin.uniform);
+rect(215,457,57,43,skin.helmetColor);rect(528,457,57,43,skin.helmetColor);
+path([[292,321],[508,321],[521,506],[279,506]],skin.uniform);rect(305,431,54,50,skin.helmetColor);rect(373,431,54,50,skin.helmetColor);rect(441,431,54,50,skin.helmetColor);
+if(skin.helmet==='capuz') path([[295,287],[306,181],[350,141],[450,141],[494,181],[505,287],[475,323],[325,323]],skin.uniform);
+if(skin.helmet==='arredondado'){ctx.beginPath();ctx.moveTo(357,151);ctx.lineTo(443,151);ctx.quadraticCurveTo(488,151,488,196);ctx.lineTo(488,271);ctx.quadraticCurveTo(488,316,443,316);ctx.lineTo(357,316);ctx.quadraticCurveTo(312,316,312,271);ctx.lineTo(312,196);ctx.quadraticCurveTo(312,151,357,151);ctx.closePath();ctx.fillStyle=skin.helmetColor;ctx.fill();ctx.lineWidth=8;ctx.strokeStyle='#101b2a';ctx.stroke()}else rect(312,151,176,165,skin.helmetColor);
+rect(327,197,146,56,skin.visor);ctx.fillStyle='#ffffff75';path([[344,205],[384,205],[362,244],[337,244]],'#ffffff75','#ffffff00',0);
+ctx.fillStyle=skin.detail;
+if(skin.accessory==='antena'){rect(474,118,10,55,skin.detail);ctx.beginPath();ctx.arc(479,111,12,0,Math.PI*2);ctx.fill()}
+if(skin.accessory==='chifres'){path([[320,164],[285,110],[340,145]],skin.detail);path([[480,164],[515,110],[460,145]],skin.detail)}
+if(skin.accessory==='coroa')path([[335,153],[327,106],[365,128],[400,93],[435,128],[473,106],[465,153]],skin.detail);
+if(skin.accessory==='fone'){rect(294,201,19,54,skin.detail);rect(487,201,19,54,skin.detail);ctx.beginPath();ctx.arc(400,210,102,Math.PI,0);ctx.lineWidth=10;ctx.strokeStyle=skin.detail;ctx.stroke()}
+if(skin.accessory==='oculos'){rect(329,202,61,42,'#192638');rect(410,202,61,42,'#192638');rect(390,216,20,7,skin.detail)}
+ctx.fillStyle=skin.detail;const e=skin.emblem;if(e==='estrela')star(400,371,25);if(e==='cruz'){ctx.fillRect(392,346,16,50);ctx.fillRect(375,363,50,16)}if(e==='raio')path([[405,342],[381,375],[398,375],[390,400],[422,365],[404,365]],skin.detail);if(e==='escudo')path([[377,349],[423,349],[420,383],[400,397],[380,383]],skin.detail);if(e==='caveira'){ctx.beginPath();ctx.arc(400,365,22,0,Math.PI*2);ctx.fill();ctx.fillRect(386,377,28,13);ctx.fillStyle=skin.uniform;ctx.fillRect(389,361,7,7);ctx.fillRect(404,361,7,7)}
+ctx.fillStyle='#fff';ctx.font='900 28px system-ui';ctx.textAlign='center';ctx.fillText((skin.name.trim()||'MEU OPERADOR').toUpperCase(),400,752,660);
+}
+function download(blob,name){
+if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.nexusBridge){
+const reader=new FileReader();
+reader.onloadend=()=>{
+const base64=(typeof reader.result==='string'&&reader.result.includes(','))?reader.result.split(',')[1]:'';
+window.webkit.messageHandlers.nexusBridge.postMessage({action:'exportFile',name,mimeType:blob.type||'application/octet-stream',base64});
+};
+reader.readAsDataURL(blob);
+return;
+}
+const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)
+}
+$('download-png').addEventListener('click',()=>canvas.toBlob(blob=>{if(blob){download(blob,'meu-operador-nexus.png');status.textContent='Imagem baixada! Envie o PNG no chat.'}else status.textContent='Não foi possível gerar a imagem.'},'image/png'));
+$('download-json').addEventListener('click',()=>{download(new Blob([JSON.stringify({format:'nexus-operator-v1',skin},null,2)],{type:'application/json'}),'meu-operador-nexus.json');status.textContent='Projeto baixado! Use “Abrir projeto” para continuar editando.'});
+$('import').addEventListener('click',()=>$('file').click());
+$('file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>20000)throw Error();const data=JSON.parse(await file.text());const s=data.skin;if(data.format!=='nexus-operator-v1'||!s||typeof s.name!=='string'||s.name.length>24||!colorFields.every(([key])=>typeof s[key]==='string'&&/^#[0-9a-f]{6}$/i.test(s[key]))||!Object.entries(groups).every(([key,opts])=>opts.some(([v])=>v===s[key])))throw Error();skin={...s};update();status.textContent='Projeto carregado!'}catch{status.textContent='Arquivo inválido. Escolha um projeto JSON criado neste estúdio.'}e.target.value=''});
+update();
+})();
+</script>
+</body>
+</html>
