@@ -5,6 +5,9 @@ on:
     branches: [ main, "arena/**" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-latest
@@ -59,3 +62,15 @@ jobs:
           name: NexusWZ-IPA
           path: build/*.ipa
           if-no-files-found: error
+
+      - name: Publish Public Release IPA (Sem Login)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="latest-ipa"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" build/*.ipa --clobber
+            gh release edit "$TAG" --title "Download Direto do Jogo (.ipa)" --notes "Baixe o arquivo **.ipa** diretamente abaixo no celular (não precisa fazer login no GitHub)."
+          else
+            gh release create "$TAG" build/*.ipa --target "${{ github.sha }}" --title "Download Direto do Jogo (.ipa)" --notes "Baixe o arquivo **.ipa** diretamente abaixo no celular (não precisa fazer login no GitHub)."
+          fi
