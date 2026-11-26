@@ -1,0 +1,93 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, "arena/**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select latest Xcode
+        run: |
+          LATEST_XCODE=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$LATEST_XCODE" ]; then
+            echo "Selecting $LATEST_XCODE"
+            sudo xcode-select -s "$LATEST_XCODE"
+          fi
+          xcodebuild -version
+          swift --version
+
+      - name: Install xtool
+        run: |
+          brew install --cask xtool-org/tap/xtool || brew install xtool-org/tap/xtool
+          xtool --version || xtool --help
+
+      - name: Build and Package IPA
+        run: |
+          set -o pipefail
+          mkdir -p build
+          BUILD_OK=0
+          if xtool dev build --ipa 2>&1 | tee build/xtool-build.log; then
+            BUILD_OK=1
+            echo "Built with xtool dev build --ipa"
+          elif xtool dev build 2>&1 | tee -a build/xtool-build.log; then
+            BUILD_OK=1
+            echo "Built with xtool dev build"
+          fi
+
+          if [ "$BUILD_OK" -ne 1 ]; then
+            ERR_LINES=$(grep -E "error:|fatalError" build/xtool-build.log | head -n 15 | tr '\n' ' ' | tr '"' "'" || true)
+            echo "::error title=Swift Build Error::${ERR_LINES:-xtool dev build failed}"
+            exit 1
+          fi
+
+          # Collect .ipa or package .app into Payload/*.app -> NextVR.ipa
+          find xtool .build -maxdepth 4 -name "*.ipa" -exec cp {} build/ \; 2>/dev/null || true
+          if ! ls build/*.ipa 1>/dev/null 2>&1; then
+            for app_dir in $(find xtool .build -maxdepth 4 -name "*.app" -type d 2>/dev/null); do
+              if [ -d "$app_dir" ]; then
+                app_name=$(basename "$app_dir" .app)
+                rm -rf build/Payload
+                mkdir -p build/Payload
+                cp -R "$app_dir" build/Payload/
+                (cd build && zip -qr "${app_name}.ipa" Payload)
+              fi
+            done
+          fi
+
+          if ! ls build/*.ipa 1>/dev/null 2>&1; then
+            echo "::error title=Packaging Error::No .ipa or .app found under xtool/ or .build/"
+            exit 1
+          fi
+          if [ -f build/NextVR.ipa ]; then
+            mv build/NextVR.ipa build/NexusVR.ipa
+          fi
+          ls -lh build/*.ipa
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NexusVR-IPA
+          path: build/*.ipa
+          if-no-files-found: error
+
+      - name: Publish Public Release IPA (Sem Login)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="nexusvr-ipa"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" build/*.ipa --clobber
+            gh release edit "$TAG" --title "Nexus VR (.ipa para iPhone)" --notes "Download direto do aplicativo **Nexus VR (.ipa)** para iPhone (sem precisar de login)."
+          else
+            gh release create "$TAG" build/*.ipa --target "${{ github.sha }}" --title "Nexus VR (.ipa para iPhone)" --notes "Download direto do aplicativo **Nexus VR (.ipa)** para iPhone (sem precisar de login)."
+          fi

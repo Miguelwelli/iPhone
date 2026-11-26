@@ -1,0 +1,13 @@
+/* ==========================================================================
+   Nexus VR — styles.css
+   Ponto de entrada único das folhas de estilo. Os módulos ficam em assets/css:
+
+     base.css  → tokens, reset, tipografia, tela de entrada
+     ui.css    → HUD, dock, painéis, jogos, player 360°, modos VR
+
+   Importar este arquivo (em vez de cada módulo) mantém o HTML enxuto e
+   garante a ordem de cascata correta.
+   ========================================================================== */
+
+@import url("assets/css/base.css");
+@import url("assets/css/ui.css");

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="nx-preload">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Nexus VR" />
+  <meta name="theme-color" content="#05060d" />
+  <meta name="description"
+        content="Nexus VR — hub imersivo 3D/VR com skybox 360°, vídeo 360°, mini-games e navegador, feito com Three.js." />
+  <title>Nexus VR</title>
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Three.js r147 UMD build (local, decompressed — no CDN, no ESM) -->
+  <script src="assets/vendor/three.min.js"></script>
+  <script src="assets/vendor/GLTFLoader.js"></script>
+</head>
+<body>
+  <div id="app" class="app">
+
+    <!-- ================= Entry menu ================= -->
+    <section id="entry" class="entry" aria-label="Tela inicial">
+      <div id="entry-canvas-host" class="entry__canvas-host"></div>
+      <div class="entry__vignette"></div>
+      <div class="entry__grain"></div>
+
+      <header class="entry__topbar">
+        <div class="brand brand--sm">
+          <img class="brand__mark" src="assets/icons/logo-mark.svg" alt="" width="26" height="26" />
+          <span class="brand__word">NEXUS<span class="brand__vr">VR</span></span>
+        </div>
+        <div class="entry__topbar-actions">
+          <button class="chip" id="btn-lang" type="button" aria-label="Idioma">PT</button>
+          <button class="chip chip--icon" id="btn-sound-entry" type="button"
+                  aria-label="Som" aria-pressed="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7"/><path class="wave" d="M19 6a9 9 0 0 1 0 12"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="entry__hero">
+        <div class="brand-lockup">
+          <div class="brand-lockup__ring" aria-hidden="true">
+            <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" /></svg>
+          </div>
+          <h1 class="title">
+            <span class="title__nexus">NEXUS</span><span class="title__vr">VR</span>
+          </h1>
+          <p class="tagline" data-i18n="tagline">Seu universo, a 360 graus.</p>
+        </div>
+
+        <div class="entry__cta">
+          <button id="btn-enter" class="btn btn--hero" type="button">
+            <span class="btn__glow" aria-hidden="true"></span>
+            <span class="btn__label">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+              <span data-i18n="enter">Entrar</span>
+            </span>
+          </button>
+          <button id="btn-enter-vr" class="btn btn--ghost btn--hero-2" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h13A2.5 2.5 0 0 1 21 8.5v7a2.5 2.5 0 0 1-4.3 1.7l-1.5-1.6a2 2 0 0 0-2.9 0l-1.5 1.6A2.5 2.5 0 0 1 3 15.5v-7zm4.4 2a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2zm9.2 0a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2z"/></svg>
+            <span data-i18n="enterVr">Entrar em VR</span>
+          </button>
+        </div>
+
+        <ul class="entry__features">
+          <li><span class="dot dot--cyan"></span><span data-i18n="feat1">Skybox 360° com 5 mundos</span></li>
+          <li><span class="dot dot--violet"></span><span data-i18n="feat2">6DoF com giroscópio e toque</span></li>
+          <li><span class="dot dot--pink"></span><span data-i18n="feat3">Hand tracking via NativeXR</span></li>
+        </ul>
+      </div>
+
+      <footer class="entry__foot">
+        <p class="entry__hint" data-i18n="deviceHint">Otimizado para iPhone · funciona offline</p>
+        <button class="linklike" id="btn-ios-help" type="button" data-i18n="iosHelp">Abrir no iOS</button>
+      </footer>
+    </section>
+
+    <!-- ================= Main experience ================= -->
+    <main id="world" class="world" hidden>
+      <div id="world-stage" class="world-stage"></div>
+      <div class="world__grain" aria-hidden="true"></div>
+
+      <!-- Reticle / pointer -->
+      <div id="reticle" class="reticle" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <circle class="reticle__ring" cx="32" cy="32" r="21" />
+          <circle class="reticle__dot" cx="32" cy="32" r="3.2" />
+        </svg>
+      </div>
+
+      <!-- Minimal in-world HUD -->
+      <header class="hud hud--top">
+        <div class="hud__group">
+          <button class="hudbtn" id="btn-back" type="button" aria-label="Voltar ao hub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <div class="hud__title-block">
+            <span class="hud__kicker" id="hud-kicker">Nexus VR</span>
+            <h2 class="hud__title" id="hud-title">Hub</h2>
+          </div>
+        </div>
+        <div class="hud__group">
+          <button class="hudbtn hudbtn--round" id="btn-cam" type="button" aria-label="Mover câmera">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+          </button>
+          <button class="hudbtn hudbtn--round" id="btn-settings" type="button" aria-label="Configurações">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6h.09A1.7 1.7 0 0 0 10 3.04V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.09a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+          </button>
+          <button class="hudbtn hudbtn--round hudbtn--vr" id="btn-vr" type="button" aria-label="Alternar VR estéreo" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16a2 2 0 0 1 2 2v6a2 2 0 0 1-3.4 1.4L16.5 15a3 3 0 0 0-4.2 0l-2 2.4A2 2 0 0 1 7 18.5L4 15.4V10a2 2 0 0 1 2-2z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <footer class="hud hud--bottom">
+        <div class="hud__status" id="hud-status" role="status"></div>
+      </footer>
+
+      <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+      <div id="hub-caption" class="hub-caption" aria-live="polite">
+        <div class="hub-caption__title" id="hub-caption-title"></div>
+        <div class="hub-caption__sub" id="hub-caption-sub"></div>
+      </div>
+    </main>
+
+    <!-- ================= Overlay panels ================= -->
+    <div id="overlay-root" class="overlay-root" hidden></div>
+
+    <!-- ================= App card dock ================= -->
+    <div id="dock" class="dock" hidden></div>
+
+    <!-- ================= Panels (declarative, filled by app.js) ================= -->
+    <section id="panel-settings" class="panel" hidden aria-modal="true" role="dialog"
+             aria-labelledby="settings-title">
+      <div class="panel__scrim" data-close></div>
+      <div class="panel__sheet">
+        <header class="panel__head">
+          <div>
+            <span class="panel__kicker" data-i18n="settings">Configurações</span>
+            <h2 class="panel__title" id="settings-title" data-i18n="settingsTitle">Ajuste a experiência</h2>
+          </div>
+          <button class="iconbtn" data-close type="button" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="panel__body" id="settings-body"></div>
+      </div>
+    </section>
+
+    <section id="panel-player" class="panel panel--full" hidden aria-modal="true" role="dialog">
+      <div class="player">
+        <div class="player__stage" id="player-stage"></div>
+        <header class="player__head">
+          <button class="hudbtn" id="btn-player-close" type="button" aria-label="Fechar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <h2 class="player__title" id="player-title">360°</h2>
+          <span class="player__badge" id="player-badge">360°</span>
+        </header>
+        <div class="player__loading" id="player-loading"><span class="spinner"></span></div>
+      </div>
+    </section>
+
+    <!-- ================= iOS install helper ================= -->
+    <div class="sheet" id="ios-sheet" hidden aria-modal="true" role="dialog">
+      <div class="sheet__scrim" data-ios-close></div>
+      <div class="sheet__card">
+        <h2 data-i18n="iosTitle">Levar o Nexus VR para o iPhone</h2>
+        <p data-i18n="iosBody">Este app roda no Safari e também dentro de apps nativos (WKWebView).
+          Para abrir como app em tela cheia, use “Adicionar à Tela de Início”.</p>
+        <ol class="steps">
+          <li><span class="steps__num">1</span><span data-i18n="iosStep1">Toque no botão Compartilhar do Safari.</span></li>
+          <li><span class="steps__num">2</span><span data-i18n="iosStep2">Escolha “Adicionar à Tela de Início”.</span></li>
+          <li><span class="steps__num">3</span><span data-i18n="iosStep3">Abra pelo ícone — o modo tela cheia é ativado.</span></li>
+        </ol>
+        <button class="btn btn--primary" data-ios-close type="button" data-i18n="gotIt">Entendi</button>
+      </div>
+    </div>
+
+    <!-- ================= Boot / loader ================= -->
+    <div id="boot" class="boot">
+      <div class="boot__inner">
+        <div class="boot__logo">
+          <img src="assets/icons/logo-mark.svg" alt="" width="54" height="54" />
+        </div>
+        <div class="boot__bar"><span id="boot-bar-fill"></span></div>
+        <p class="boot__label" id="boot-label" data-i18n="loading">Preparando o universo…</p>
+      </div>
+    </div>
+
+    <noscript>
+      <div class="noscript">O Nexus VR precisa de JavaScript para renderizar em 3D.</div>
+    </noscript>
+  </div>
+
+  <!-- Modules (classic scripts so WKWebView / Safari 12+ can run them) -->
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/audio.js"></script>
+  <script src="assets/js/xr.js"></script>
+  <script src="assets/js/scene.js"></script>
+  <script src="assets/js/hands.js"></script>
+  <script src="assets/js/hub.js"></script>
+  <script src="assets/js/games.js"></script>
+  <script src="assets/js/browser.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

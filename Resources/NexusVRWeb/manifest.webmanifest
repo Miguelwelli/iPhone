@@ -1,0 +1,21 @@
+{
+  "name": "Nexus VR",
+  "short_name": "Nexus VR",
+  "description": "Hub imersivo 3D/VR com skybox 360°, vídeo 360°, mini-games e navegador.",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#05060d",
+  "theme_color": "#05060d",
+  "lang": "pt-BR",
+  "categories": ["entertainment", "games"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
