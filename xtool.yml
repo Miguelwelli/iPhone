@@ -1,6 +1,6 @@
 version: 1
 bundleID: com.miguelwelli.nexusvr
 infoPath: Info.plist
-iconPath: Resources/NexusAppIcon.png
+iconPath: Resources/AppIcon.png
 resources:
   - Resources/NexusVRWeb
