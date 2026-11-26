@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>Next VR</string>
+    <key>UIStatusBarHidden</key>
+    <true/>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>
+    <key>UIRequiresFullScreen</key>
+    <true/>
+    <key>NSCameraUsageDescription</key>
+    <string>O Next VR usa a câmera para o modo Passthrough (Realidade Mista) e para rastrear suas mãos no espaço 3D.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>O Next VR pode usar o microfone em chamadas, buscas por voz e experiências sociais dentro do VR.</string>
+    <key>NSMotionUsageDescription</key>
+    <string>O Next VR usa o giroscópio e sensores de movimento para girar sua visão em 360° no espaço virtual.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Permite escolher fotos da sua galeria para o perfil ou visualizar na Galeria VR.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Permite salvar capturas ou fotos no seu álbum do iPhone.</string>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    </array>
+    <key>GCSupportedGameControllers</key>
+    <array>
+        <dict>
+            <key>ProfileName</key>
+            <string>ExtendedGamepad</string>
+        </dict>
+    </array>
+</dict>
+</plist>
