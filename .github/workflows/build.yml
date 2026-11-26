@@ -59,7 +59,7 @@ jobs:
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NexusWZ-IPA
+          name: NextVR-IPA
           path: build/*.ipa
           if-no-files-found: error
 
@@ -67,10 +67,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="latest-ipa"
+          TAG="nextvr-ipa"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" build/*.ipa --clobber
-            gh release edit "$TAG" --title "Download Direto do Jogo (.ipa)" --notes "Baixe o arquivo **.ipa** diretamente abaixo no celular (não precisa fazer login no GitHub)."
+            gh release edit "$TAG" --title "Next VR (.ipa para iPhone)" --notes "Download direto do aplicativo **Next VR (.ipa)** para iPhone (sem precisar de login)."
           else
-            gh release create "$TAG" build/*.ipa --target "${{ github.sha }}" --title "Download Direto do Jogo (.ipa)" --notes "Baixe o arquivo **.ipa** diretamente abaixo no celular (não precisa fazer login no GitHub)."
+            gh release create "$TAG" build/*.ipa --target "${{ github.sha }}" --title "Next VR (.ipa para iPhone)" --notes "Download direto do aplicativo **Next VR (.ipa)** para iPhone (sem precisar de login)."
           fi

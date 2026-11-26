@@ -3,19 +3,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "NexusWZ",
+    name: "NextVR",
     platforms: [
         .iOS(.v17),
     ],
     products: [
         .library(
-            name: "NexusWZ",
-            targets: ["NexusWZ"]
+            name: "NextVR",
+            targets: ["NextVR"]
         ),
     ],
     targets: [
         .target(
-            name: "NexusWZ"
+            name: "NextVR"
         ),
     ]
 )
