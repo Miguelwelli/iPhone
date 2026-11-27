@@ -41,7 +41,7 @@ public final class KeychainAPIKeyStore: APIKeyStoring {
     private let service: String
     private let account: String
 
-    public init(service: String = "com.nexusstore.app.metadata", account: String = "api-key") {
+    public init(service: String = "com.nexusstore.app.metadata", account: String = "rawg-api-key") {
         self.service = service
         self.account = account
     }

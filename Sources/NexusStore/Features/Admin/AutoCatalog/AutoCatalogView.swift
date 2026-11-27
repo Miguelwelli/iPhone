@@ -154,27 +154,43 @@ struct AutoCatalogView: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     fieldLabel("Modelo de IA")
-                    HStack {
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(assistant.configuration.model.title)
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundStyle(NexusTheme.Palette.textPrimary)
-                            Text(assistant.configuration.model.subtitle)
-                                .font(.system(size: 10))
+                    Menu {
+                        ForEach(AutoCatalogConfiguration.Model.allCases) { model in
+                            Button {
+                                assistant.selectModel(model)
+                                UISelectionFeedbackGenerator().selectionChanged()
+                            } label: {
+                                if model == assistant.configuration.model {
+                                    Label(model.title, systemImage: "checkmark")
+                                } else {
+                                    Text(model.title)
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(assistant.configuration.model.title)
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundStyle(NexusTheme.Palette.textPrimary)
+                                Text(assistant.configuration.model.subtitle)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(NexusTheme.Palette.textTertiary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.system(size: 11, weight: .semibold))
                                 .foregroundStyle(NexusTheme.Palette.textTertiary)
                         }
-                        Spacer()
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 12))
-                            .foregroundStyle(NexusTheme.Palette.success)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(fieldBackground)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 10)
-                    .background(fieldBackground)
+                    .buttonStyle(.plain)
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    fieldLabel("Chave de API (API Key)")
+                    fieldLabel("\(assistant.configuration.model.credentialName)")
                     HStack(spacing: 8) {
                         HStack(spacing: 6) {
                             if isKeyVisible {
@@ -241,6 +257,13 @@ struct AutoCatalogView: View {
 
                 connectionRow
 
+                if assistant.apiKeyLooksWrongForGemini {
+                    NoticeBanner(
+                        "Essa chave não parece ser do Google AI. As chaves do Gemini começam com AIza — gere uma em aistudio.google.com/apikey.",
+                        kind: .error
+                    )
+                }
+
                 if assistant.apiKeyLooksLikeGoogleKey {
                     NoticeBanner(
                         "A chave salva começa com AIza, ou seja, é do Google/Gemini. Ela não funciona na busca de metadados (RAWG). Crie a chave gratuita em rawg.io/apikey e cole acima.",
@@ -259,10 +282,10 @@ struct AutoCatalogView: View {
                     }
                     .buttonStyle(.plain)
 
-                    Link(destination: URL(string: "https://rawg.io/apikey")!) {
+                    Link(destination: URL(string: assistant.configuration.model.credentialHelpURLString)!) {
                         HStack(spacing: 5) {
                             Image(systemName: "arrow.up.right.square")
-                            Text("Obter chave RAWG")
+                            Text("Obter chave")
                         }
                     }
                 }
@@ -534,11 +557,11 @@ struct AutoCatalogView: View {
 
     private var legalNote: some View {
         VStack(spacing: 6) {
-            // RAWG's free tier requires an active hyperlink wherever its data is displayed.
-            Link(destination: URL(string: "https://rawg.io")!) {
+            // RAWG requires an active hyperlink wherever its data is displayed.
+            Link(destination: URL(string: sourceCredits.url)!) {
                 HStack(spacing: 4) {
                     Image(systemName: "link")
-                    Text("Dados e imagens: RAWG Video Games Database")
+                    Text(sourceCredits.text)
                 }
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(NexusTheme.Palette.redBright)
@@ -562,16 +585,16 @@ struct AutoCatalogView: View {
                         .foregroundStyle(NexusTheme.Palette.textPrimary)
 
                     helpBlock(
-                        title: "Por que a busca usa RAWG e não Gemini?",
-                        text: "O Gemini é um modelo de linguagem: sozinho ele não pesquisa a internet nem devolve metadados verificados. Se o app pedisse à Gemini para lembrar tamanhos e versões de jogos de PS4, a resposta viria da memória do modelo — exatamente o dado inventado que você proibiu. A busca usa a API pública da RAWG, que devolve título, capa, gêneros e publisher reais, com link para conferência."
+                        title: "RAWG — banco de dados de jogos",
+                        text: "Devolve campos estruturados (título, capa, gêneros, publisher) e uma página de origem para conferência. Gratuita para uso pessoal, exige atribuição com link. Não informa tamanho de pacote .pkg: esse campo fica vazio e é você quem preenche."
                     )
                     helpBlock(
-                        title: "O que a Gemini faria aqui",
-                        text: "Uma camada opcional de texto (descrições em português, tags). Para isso seria necessária uma função de nuvem intermediária, porque o app não pode carregar uma chave do Google exposta. O caminho está documentado em Docs/IA.md."
+                        title: "Gemini + Pesquisa Google",
+                        text: "O Gemini sozinho responde de memória. Com a ferramenta google_search ele pesquisa de verdade, e o app só aceita um jogo quando o Google devolve uma citação para ele. Tamanho de pacote só é mantido se vier citado de uma fonte; caso contrário fica vazio. Nada de link .pkg é gerado pela IA."
                     )
                     helpBlock(
-                        title: "Onde pego a chave RAWG",
-                        text: "rawg.io/apidocs → Get API key. É gratuita para uso pessoal e tem limite de requisições; o app mostra o erro 429 quando o limite é atingido."
+                        title: "Onde pego cada chave",
+                        text: "RAWG: rawg.io/apikey (grátis). Gemini: aistudio.google.com/apikey (chave começa com AIza). As duas ficam em itens separados do Keychain, então você pode alternar entre elas sem digitar de novo."
                     )
                     helpBlock(
                         title: "Onde a chave fica guardada",
@@ -595,6 +618,17 @@ struct AutoCatalogView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(NexusTheme.Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    /// Attribution for the active provider (RAWG requires a link; Gemini grounding requires
+    /// the "Search" label on results).
+    private var sourceCredits: (text: String, url: String) {
+        switch assistant.configuration.model {
+        case .rawg:
+            return ("Dados e imagens: RAWG Video Games Database", "https://rawg.io")
+        case .gemini:
+            return ("Resultados com Google Search (Gemini)", "https://ai.google.dev/gemini-api/docs/google-search")
         }
     }
 

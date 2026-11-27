@@ -197,11 +197,49 @@ public struct AutoCatalogStoreSnapshot: Codable, Equatable, Sendable {
 /// Provider/model selection and per-run behaviour. Contains no secret.
 public struct AutoCatalogConfiguration: Codable, Equatable, Sendable {
     public enum Model: String, Codable, CaseIterable, Identifiable, Sendable {
+        /// Structured game database. Best for covers, genres and publisher, with a verifiable page.
         case rawg
+        /// Gemini grounded with Google Search. Best for web coverage; every game carries citations.
+        case gemini
 
         public var id: String { rawValue }
-        public var title: String { "RAWG — banco de dados de jogos" }
-        public var subtitle: String { "Metadados oficiais • capas • PS4" }
+
+        public var title: String {
+            switch self {
+            case .rawg: return "RAWG — banco de dados de jogos"
+            case .gemini: return "Google Gemini + Pesquisa Google"
+            }
+        }
+
+        public var subtitle: String {
+            switch self {
+            case .rawg: return "Metadados estruturados • capas • PS4"
+            case .gemini: return "Pesquisa na web com citações • capas"
+            }
+        }
+
+        public var credentialName: String {
+            switch self {
+            case .rawg: return "Chave RAWG"
+            case .gemini: return "Chave Google AI (Gemini)"
+            }
+        }
+
+        /// Where the admin gets a key for this provider.
+        public var credentialHelpURLString: String {
+            switch self {
+            case .rawg: return "https://rawg.io/apikey"
+            case .gemini: return "https://aistudio.google.com/apikey"
+            }
+        }
+
+        /// Keychain account used for this provider's credential.
+        public var credentialAccount: String {
+            switch self {
+            case .rawg: return "rawg-api-key"
+            case .gemini: return "gemini-api-key"
+            }
+        }
     }
 
     public var model: Model

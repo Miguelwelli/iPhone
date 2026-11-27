@@ -26,7 +26,8 @@ public final class AutoCatalogStore: ObservableObject {
     @Published public var lastRunNote: String?
 
     private let repository: AutoCatalogRepository
-    private let keyStore: APIKeyStoring
+    /// One Keychain account per provider: a RAWG key and a Google key can coexist.
+    private let keyStores: [AutoCatalogConfiguration.Model: APIKeyStoring]
     private let catalog: CatalogStore
     private let ingestion: CatalogIngestion
     private let sessionFactory: (String) -> URLSession
@@ -39,32 +40,75 @@ public final class AutoCatalogStore: ObservableObject {
         catalog: CatalogStore,
         sessionFactory: @escaping (String) -> URLSession = { _ in .shared }
     ) {
+        // Convenience path used by tests/previews: the injected store serves the stored model and the
+        // other provider falls back to an in-memory key.
+        self.init(
+            repository: repository,
+            keyStores: [.rawg: keyStore, .gemini: InMemoryAPIKeyStore()],
+            catalog: catalog,
+            sessionFactory: sessionFactory
+        )
+    }
+
+    public init(
+        repository: AutoCatalogRepository,
+        keyStores: [AutoCatalogConfiguration.Model: APIKeyStoring],
+        catalog: CatalogStore,
+        sessionFactory: @escaping (String) -> URLSession = { _ in .shared }
+    ) {
         self.repository = repository
-        self.keyStore = keyStore
+        self.keyStores = keyStores
         self.catalog = catalog
         self.ingestion = CatalogIngestion(repository: catalog.repository)
         self.sessionFactory = sessionFactory
         self.history = repository.searches
         self.configuration = repository.configuration
-        self.hasAPIKey = !(keyStore.apiKey() ?? "").isEmpty
+        self.hasAPIKey = false
+        self.hasAPIKey = !(currentKey ?? "").isEmpty
+    }
+
+    // MARK: - Credentials (per provider)
+
+    private var currentKeyStore: APIKeyStoring {
+        keyStores[configuration.model] ?? InMemoryAPIKeyStore()
+    }
+
+    private var currentKey: String? {
+        currentKeyStore.apiKey()
+    }
+
+    /// Switches the active provider and refreshes key-dependent UI state.
+    public func selectModel(_ model: AutoCatalogConfiguration.Model) {
+        var config = configuration
+        config.model = model
+        saveConfiguration(config)
+        hasAPIKey = !(currentKeyStore.apiKey() ?? "").isEmpty
+        phase = .idle
     }
 
     // MARK: - Credentials
 
     /// Non-secret prefix/suffix so the admin can recognise which key is stored.
     public var savedKeyDescription: String? {
-        guard let key = keyStore.apiKey(), !key.isEmpty else { return nil }
+        guard let key = currentKey, !key.isEmpty else { return nil }
         return maskedAPIKey
     }
 
     /// True when the stored key is a Google key, which cannot work with RAWG.
+    /// A Google key pasted while RAWG is selected (the classic mistake).
     public var apiKeyLooksLikeGoogleKey: Bool {
-        guard let key = keyStore.apiKey() else { return false }
-        return RAWGMetadataProvider.looksLikeGoogleKey(key)
+        guard let key = currentKey else { return false }
+        return configuration.model == .rawg && RAWGMetadataProvider.looksLikeGoogleKey(key)
+    }
+
+    /// A non-Google key pasted while Gemini is selected.
+    public var apiKeyLooksWrongForGemini: Bool {
+        guard let key = currentKey, !key.isEmpty else { return false }
+        return configuration.model == .gemini && !RAWGMetadataProvider.looksLikeGoogleKey(key)
     }
 
     public var maskedAPIKey: String {
-        guard let key = keyStore.apiKey(), !key.isEmpty else { return "" }
+        guard let key = currentKey, !key.isEmpty else { return "" }
         guard key.count > 8 else { return String(repeating: "•", count: key.count) }
         return String(key.prefix(4)) + String(repeating: "•", count: max(6, key.count - 8)) + String(key.suffix(4))
     }
@@ -72,7 +116,7 @@ public final class AutoCatalogStore: ObservableObject {
     public func saveAPIKey(_ key: String) {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         do {
-            try keyStore.save(trimmed)
+            try currentKeyStore.save(trimmed)
             hasAPIKey = !trimmed.isEmpty
             phase = .idle
             if trimmed.isEmpty { lastRunNote = "Chave removida do Keychain." }
@@ -82,7 +126,7 @@ public final class AutoCatalogStore: ObservableObject {
     }
 
     public func removeAPIKey() {
-        keyStore.delete()
+        currentKeyStore.delete()
         hasAPIKey = false
         phase = .idle
     }
@@ -100,11 +144,11 @@ public final class AutoCatalogStore: ObservableObject {
     // MARK: - Connection test
 
     public func testConnection() async {
-        guard let key = keyStore.apiKey(), !key.isEmpty else {
+        guard let key = currentKey, !key.isEmpty else {
             phase = .failed(MetadataProviderError.missingCredential.localizedDescription)
             return
         }
-        guard !RAWGMetadataProvider.looksLikeGoogleKey(key) else {
+        if configuration.model == .rawg, RAWGMetadataProvider.looksLikeGoogleKey(key) {
             phase = .failed(MetadataProviderError.wrongProviderKey.localizedDescription)
             return
         }
@@ -124,11 +168,11 @@ public final class AutoCatalogStore: ObservableObject {
         request: AutoCatalogRequest,
         verifyLinks: Bool = true
     ) async -> AutoCatalogSearch? {
-        guard let key = keyStore.apiKey(), !key.isEmpty else {
+        guard let key = currentKey, !key.isEmpty else {
             phase = .failed(MetadataProviderError.missingCredential.localizedDescription)
             return nil
         }
-        guard !RAWGMetadataProvider.looksLikeGoogleKey(key) else {
+        if configuration.model == .rawg, RAWGMetadataProvider.looksLikeGoogleKey(key) {
             phase = .failed(MetadataProviderError.wrongProviderKey.localizedDescription)
             return nil
         }
@@ -265,8 +309,13 @@ public final class AutoCatalogStore: ObservableObject {
         history = repository.searches
     }
 
-    private func makeProvider(key: String) -> RAWGMetadataProvider {
-        RAWGMetadataProvider(apiKey: key, session: sessionFactory(key))
+    private func makeProvider(key: String) -> MetadataProvider {
+        switch configuration.model {
+        case .rawg:
+            return RAWGMetadataProvider(apiKey: key, session: sessionFactory(key))
+        case .gemini:
+            return GeminiMetadataProvider(apiKey: key, session: sessionFactory(key))
+        }
     }
 
     public static func message(for error: Error) -> String {

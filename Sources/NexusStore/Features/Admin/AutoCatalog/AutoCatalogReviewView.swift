@@ -47,9 +47,9 @@ struct AutoCatalogReviewView: View {
                             }
                         }
                     }
-                    if let url = URL(string: "https://rawg.io") {
+                    if let url = URL(string: creditURL) {
                         Link(destination: url) {
-                            Text("Dados e imagens: RAWG Video Games Database")
+                            Text(creditText)
                                 .font(.system(size: 9.5, weight: .semibold))
                                 .foregroundStyle(NexusTheme.Palette.redBright)
                         }
@@ -168,6 +168,18 @@ struct AutoCatalogReviewView: View {
             RoundedRectangle(cornerRadius: NexusTheme.Metrics.cardRadius, style: .continuous)
                 .stroke(NexusTheme.Palette.stroke, lineWidth: 1)
         )
+    }
+
+    private var creditText: String {
+        (search?.providerName ?? "").contains("Gemini")
+            ? "Resultados com Google Search (Gemini)"
+            : "Dados e imagens: RAWG Video Games Database"
+    }
+
+    private var creditURL: String {
+        (search?.providerName ?? "").contains("Gemini")
+            ? "https://ai.google.dev/gemini-api/docs/google-search"
+            : "https://rawg.io"
     }
 
     private var categorySummary: String {
