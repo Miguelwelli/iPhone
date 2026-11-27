@@ -30,9 +30,9 @@ struct AdminView: View {
         ZStack {
             NexusBackground()
             if !preferences.value.hasAdminPassword {
-                AdminPasswordSetupView(preferences: preferences, session: session)
+                AdminPasswordSetupView(preferences: preferences, session: session, transfers: transfers)
             } else if !session.isUnlocked {
-                AdminLoginView(preferences: preferences, session: session)
+                AdminLoginView(preferences: preferences, session: session, transfers: transfers)
             } else {
                 panel
             }

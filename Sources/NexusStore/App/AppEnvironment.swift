@@ -50,6 +50,7 @@ public enum NexusFileStorage {
 }
 
 /// App-wide dependency container created once in `NexusStoreApp`.
+@MainActor
 public final class AppEnvironment {
 
     public let catalog: CatalogRepository
@@ -85,7 +86,7 @@ public final class AppEnvironment {
         autoCatalog = AutoCatalogStore(
             repository: AutoCatalogRepository(fileURL: NexusFileStorage.autoCatalogFile),
             keyStore: KeychainAPIKeyStore(),
-            catalog: catalog
+            catalog: CatalogStore(repository: catalog)
         )
     }
 }
