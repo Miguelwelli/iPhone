@@ -49,8 +49,8 @@ public enum NexusFileStorage {
 }
 
 /// App-wide dependency container created once in `NexusStoreApp`.
-public @MainActor
-final class AppEnvironment {
+@MainActor
+public final class AppEnvironment {
 
     public let catalog: CatalogRepository
     public let consoles: ConsoleRepository
