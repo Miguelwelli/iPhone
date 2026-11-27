@@ -86,7 +86,7 @@ public final class AppEnvironment {
         autoCatalog = AutoCatalogStore(
             repository: AutoCatalogRepository(fileURL: NexusFileStorage.autoCatalogFile),
             keyStore: KeychainAPIKeyStore(),
-            catalog: catalog
+            catalog: CatalogStore(repository: catalog)
         )
     }
 }
