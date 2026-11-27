@@ -27,11 +27,18 @@ struct AutoCatalogReviewView: View {
                         if let error = search.errorMessage {
                             NoticeBanner(error, kind: .error)
                         }
-                        if candidates.isEmpty {
+                        if candidates.isEmpty && search.errorMessage == nil {
                             EmptyStateView(
                                 icon: "sparkles",
                                 title: "Nenhum jogo encontrado",
                                 message: "A fonte consultada não devolveu títulos novos para estas categorias. Ajuste os parâmetros e repita a busca."
+                            )
+                            .padding(.top, 20)
+                        } else if candidates.isEmpty {
+                            EmptyStateView(
+                                icon: "exclamationmark.triangle",
+                                title: "A busca não foi concluída",
+                                message: "Nada foi cadastrado. Volte, corrija a chave e tente novamente."
                             )
                             .padding(.top, 20)
                         } else {
@@ -120,17 +127,31 @@ struct AutoCatalogReviewView: View {
                     .foregroundStyle(NexusTheme.Palette.textSecondary)
                     .lineLimit(1)
                 Spacer(minLength: 8)
-                HStack(spacing: 5) {
-                    Circle().fill(NexusTheme.Palette.success).frame(width: 6, height: 6)
-                    Text("\(search?.readyCount ?? 0) PRONTOS")
-                        .font(.system(size: 9.5, weight: .bold))
-                        .kerning(0.3)
-                        .foregroundStyle(NexusTheme.Palette.success)
+                if search?.errorMessage == nil {
+                    HStack(spacing: 5) {
+                        Circle().fill(NexusTheme.Palette.success).frame(width: 6, height: 6)
+                        Text("\(search?.readyCount ?? 0) PRONTOS")
+                            .font(.system(size: 9.5, weight: .bold))
+                            .kerning(0.3)
+                            .foregroundStyle(NexusTheme.Palette.success)
+                    }
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(Capsule().fill(NexusTheme.Palette.success.opacity(0.12)))
+                    .overlay(Capsule().stroke(NexusTheme.Palette.success.opacity(0.35), lineWidth: 1))
+                } else {
+                    HStack(spacing: 5) {
+                        Circle().fill(NexusTheme.Palette.danger).frame(width: 6, height: 6)
+                        Text("FALHOU")
+                            .font(.system(size: 9.5, weight: .bold))
+                            .kerning(0.3)
+                            .foregroundStyle(NexusTheme.Palette.danger)
+                    }
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(Capsule().fill(NexusTheme.Palette.danger.opacity(0.12)))
+                    .overlay(Capsule().stroke(NexusTheme.Palette.danger.opacity(0.35), lineWidth: 1))
                 }
-                .padding(.horizontal, 9)
-                .padding(.vertical, 5)
-                .background(Capsule().fill(NexusTheme.Palette.success.opacity(0.12)))
-                .overlay(Capsule().stroke(NexusTheme.Palette.success.opacity(0.35), lineWidth: 1))
             }
             Rectangle()
                 .fill(NexusTheme.Palette.red)

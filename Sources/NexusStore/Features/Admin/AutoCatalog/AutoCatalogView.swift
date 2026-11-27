@@ -228,19 +228,46 @@ struct AutoCatalogView: View {
                     }
                 }
 
+                if let saved = assistant.savedKeyDescription {
+                    HStack(spacing: 5) {
+                        Text("Chave salva:")
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(NexusTheme.Palette.textTertiary)
+                        Text(saved)
+                            .font(.system(size: 10.5, design: .monospaced))
+                            .foregroundStyle(NexusTheme.Palette.textSecondary)
+                    }
+                }
+
                 connectionRow
 
-                Button {
-                    showKeyHelp = true
-                } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "info.circle")
-                        Text("O que é a Gemini e por que a busca usa outra fonte")
-                    }
-                    .font(.system(size: 11))
-                    .foregroundStyle(NexusTheme.Palette.textTertiary)
+                if assistant.apiKeyLooksLikeGoogleKey {
+                    NoticeBanner(
+                        "A chave salva começa com AIza, ou seja, é do Google/Gemini. Ela não funciona na busca de metadados (RAWG). Crie a chave gratuita em rawg.io/apikey e cole acima.",
+                        kind: .error
+                    )
                 }
-                .buttonStyle(.plain)
+
+                HStack(spacing: 14) {
+                    Button {
+                        showKeyHelp = true
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "info.circle")
+                            Text("Por que não Gemini?")
+                        }
+                    }
+                    .buttonStyle(.plain)
+
+                    Link(destination: URL(string: "https://rawg.io/apikey")!) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "arrow.up.right.square")
+                            Text("Obter chave RAWG")
+                        }
+                    }
+                }
+                .font(.system(size: 11))
+                .foregroundStyle(NexusTheme.Palette.textTertiary)
             }
         }
     }
@@ -597,18 +624,26 @@ struct AutoCatalogView: View {
             quantity: quantity,
             extractArtwork: extractArtwork
         )
-        if let search = await assistant.startSearch(request: request) {
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            activeSearchID = search.id
-        } else {
+        guard let record = await assistant.startSearch(request: request) else {
             UINotificationFeedbackGenerator().notificationOccurred(.error)
+            return
         }
+        guard record.errorMessage == nil else {
+            // The failure is already shown in the connection row; opening an empty "review" screen
+            // would look like "no games found", which is a different (and misleading) message.
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            return
+        }
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        activeSearchID = record.id
     }
 
     private func repeatSearch(_ search: AutoCatalogSearch) async {
-        if let result = await assistant.startSearch(request: search.request) {
-            activeSearchID = result.id
+        guard let result = await assistant.startSearch(request: search.request), result.errorMessage == nil else {
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            return
         }
+        activeSearchID = result.id
     }
 
     // MARK: - Building blocks

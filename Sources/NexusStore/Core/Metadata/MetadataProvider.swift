@@ -94,6 +94,8 @@ public struct MetadataQuery: Equatable, Sendable {
 
 public enum MetadataProviderError: LocalizedError, Equatable, Sendable {
     case missingCredential
+    /// The key format belongs to another service (e.g. a Google/Gemini key in the RAWG field).
+    case wrongProviderKey
     case unauthorized
     case rateLimited(retryAfter: Int?)
     case network(String)
@@ -104,6 +106,8 @@ public enum MetadataProviderError: LocalizedError, Equatable, Sendable {
         switch self {
         case .missingCredential:
             return "Nenhuma chave de API configurada. Abra a configuração e informe a chave."
+        case .wrongProviderKey:
+            return "Essa chave parece ser do Google/Gemini (começa com AIza). A busca de metadados usa a RAWG: crie uma chave gratuita em rawg.io/apikey e cole aqui."
         case .unauthorized:
             return "Chave de API recusada pelo servidor (401). Verifique se ela está correta e ativa."
         case .rateLimited(let retryAfter):
@@ -115,6 +119,8 @@ public enum MetadataProviderError: LocalizedError, Equatable, Sendable {
             return "Falha de rede: \(message)"
         case .invalidResponse:
             return "O servidor respondeu em um formato inesperado."
+        case .server(404):
+            return "O endereço da API não foi encontrado (HTTP 404). Verifique a versão do app e tente novamente."
         case .server(let status):
             return "O servidor respondeu com erro HTTP \(status)."
         }

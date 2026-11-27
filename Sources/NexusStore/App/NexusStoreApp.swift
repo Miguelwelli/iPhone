@@ -29,9 +29,9 @@ struct NexusStoreApp: App {
                 catalog: catalog,
                 transfers: transfers,
                 discovery: discovery,
+                preferences: environment.preferences,
                 router: router,
-                settings: settings,
-                preferences: environment.preferences
+                settings: settings
             )
             .environmentObject(session)
             .environmentObject(settings)

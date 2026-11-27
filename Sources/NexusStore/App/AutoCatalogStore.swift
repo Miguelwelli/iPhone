@@ -51,6 +51,18 @@ public final class AutoCatalogStore: ObservableObject {
 
     // MARK: - Credentials
 
+    /// Non-secret prefix/suffix so the admin can recognise which key is stored.
+    public var savedKeyDescription: String? {
+        guard let key = keyStore.apiKey(), !key.isEmpty else { return nil }
+        return maskedAPIKey
+    }
+
+    /// True when the stored key is a Google key, which cannot work with RAWG.
+    public var apiKeyLooksLikeGoogleKey: Bool {
+        guard let key = keyStore.apiKey() else { return false }
+        return RAWGMetadataProvider.looksLikeGoogleKey(key)
+    }
+
     public var maskedAPIKey: String {
         guard let key = keyStore.apiKey(), !key.isEmpty else { return "" }
         guard key.count > 8 else { return String(repeating: "•", count: key.count) }
@@ -92,6 +104,10 @@ public final class AutoCatalogStore: ObservableObject {
             phase = .failed(MetadataProviderError.missingCredential.localizedDescription)
             return
         }
+        guard !RAWGMetadataProvider.looksLikeGoogleKey(key) else {
+            phase = .failed(MetadataProviderError.wrongProviderKey.localizedDescription)
+            return
+        }
         phase = .testing
         do {
             let latency = try await makeProvider(key: key).testConnection()
@@ -110,6 +126,10 @@ public final class AutoCatalogStore: ObservableObject {
     ) async -> AutoCatalogSearch? {
         guard let key = keyStore.apiKey(), !key.isEmpty else {
             phase = .failed(MetadataProviderError.missingCredential.localizedDescription)
+            return nil
+        }
+        guard !RAWGMetadataProvider.looksLikeGoogleKey(key) else {
+            phase = .failed(MetadataProviderError.wrongProviderKey.localizedDescription)
             return nil
         }
         phase = .searching(step: "Consultando \(configuration.model.title)…")

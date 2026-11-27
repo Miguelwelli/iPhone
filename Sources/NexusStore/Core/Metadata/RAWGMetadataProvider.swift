@@ -20,7 +20,9 @@ public struct RAWGMetadataProvider: MetadataProvider {
 
     private let apiKey: String
     private let session: URLSession
-    private let baseURL = URL(string: "https://api.rawg.io/api")!
+    /// Base for every endpoint; `public` so tests can assert the exact URL shape.
+    public static let apiBaseURLString = "https://api.rawg.io/api"
+    private var baseURL: URL { URL(string: Self.apiBaseURLString)! }
 
     public init(apiKey: String, session: URLSession = .shared) {
         self.apiKey = apiKey
@@ -41,9 +43,23 @@ public struct RAWGMetadataProvider: MetadataProvider {
 
     // MARK: - Search
 
+    /// Cheap local sanity check for keys that cannot possibly work here.
+    ///
+    /// Google keys start with `AIza` and are 39 characters long. Pasting one is the most common
+    /// mistake because the reference design mentions Gemini, so it is worth explaining locally
+    /// instead of showing a bare 401.
+    public static func looksLikeGoogleKey(_ key: String) -> Bool {
+        let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.hasPrefix("AIza") && trimmed.count > 30
+    }
+
     public func search(_ query: MetadataQuery) async throws -> MetadataSearchResult {
-        guard !apiKey.trimmingCharacters(in: .whitespaces).isEmpty else {
+        let trimmedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedKey.isEmpty else {
             throw MetadataProviderError.missingCredential
+        }
+        guard !Self.looksLikeGoogleKey(trimmedKey) else {
+            throw MetadataProviderError.wrongProviderKey
         }
         let genres = Self.genreSlugs(for: query.categories)
         let tags = Self.tagSlugs(for: query.categories)
@@ -161,7 +177,11 @@ public struct RAWGMetadataProvider: MetadataProvider {
     }
 
     private func get(path: String, query: [URLQueryItem]) async throws -> [String: Any] {
-        var components = URLComponents(url: baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)!
+        // Built by concatenation on purpose: appendingPathComponent("/games") can yield "api//games"
+        // on some Foundation versions, and RAWG answers 404 for that.
+        guard var components = URLComponents(string: baseURL.absoluteString + path) else {
+            throw MetadataProviderError.invalidResponse
+        }
         components.queryItems = query
         guard let url = components.url else { throw MetadataProviderError.invalidResponse }
 
