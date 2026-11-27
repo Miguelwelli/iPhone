@@ -45,7 +45,7 @@ jobs:
           fi
 
           if [ "$BUILD_OK" -ne 1 ]; then
-            ERR_LINES=$(grep -E "error:" build/xtool-build.log | head -n 15 | tr '\n' ' ' | tr '"' "'" || true)
+            ERR_LINES=$(grep -E "error:|Error:" build/xtool-build.log | tail -n 10 | tr '\n' ' ' | tr '"' "'" || true)
             echo "::error title=Swift Build Error::${ERR_LINES:-xtool dev build failed}"
             exit 1
           fi
