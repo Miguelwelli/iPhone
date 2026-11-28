@@ -34,7 +34,7 @@ public final class AutoCatalogStore: ObservableObject {
     /// Admin supplied .pkg links keyed by normalized title. The assistant never invents links.
     private var pkgLinks: [String: String] = [:]
 
-    public init(
+    public convenience init(
         repository: AutoCatalogRepository,
         keyStore: APIKeyStoring,
         catalog: CatalogStore,

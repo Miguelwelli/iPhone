@@ -89,7 +89,7 @@ public final class AppEnvironment {
                 .rawg: KeychainAPIKeyStore(account: AutoCatalogConfiguration.Model.rawg.credentialAccount),
                 .gemini: KeychainAPIKeyStore(account: AutoCatalogConfiguration.Model.gemini.credentialAccount)
             ],
-            catalog: catalog
+            catalog: CatalogStore(repository: catalog)
         )
     }
 }
