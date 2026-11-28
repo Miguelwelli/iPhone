@@ -1,0 +1,197 @@
+[
+  {
+    "id": "a5178d3f-009e-5a60-be29-5ec4b5633ef2",
+    "name": "Ghost of Tsushima",
+    "description": "No final do século XIII, o império mongol devastou nações inteiras em sua campanha para conquistar o Oriente. A ilha de Tsushima é tudo o que resta entre o Japão continental e uma frota de invasão mongol massiva liderada pelo impiedoso general Khotun Khan. Como Jin Sakai, um samurai em transformação, lute pela liberdade de seu povo.",
+    "categories": [
+      "acao",
+      "mundo-aberto"
+    ],
+    "sizeText": "48.5 GB",
+    "version": "2.18",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/ghost-of-tsushima.pkg",
+    "coverURLString": "cover_ghost",
+    "bannerURLString": "banner_ghost",
+    "createdAt": "2026-11-20T12:00:00Z",
+    "updatedAt": "2026-11-20T12:00:00Z",
+    "isFeatured": true,
+    "platformTag": "PS4 ENHANCED",
+    "developer": "Sucker Punch Productions",
+    "publisher": "Sony Interactive Entertainment",
+    "ageRating": "18+",
+    "rating": 4.9,
+    "ratingCount": 18400,
+    "tags": [
+      "1 Jogador",
+      "PT-BR",
+      "Versão do Diretor"
+    ]
+  },
+  {
+    "id": "87a76f5a-0518-5a99-8c69-e14b39e9aad5",
+    "name": "The Last of Us Part II",
+    "description": "Cinco anos depois do surto que devastou a civilização, Ellie e Joel encontraram um novo lar em Jackson, Wyoming. Uma violência inesperada obriga Ellie a embarcar em uma jornada implacável por territórios hostis.",
+    "categories": [
+      "acao",
+      "aventura"
+    ],
+    "sizeText": "43.1 GB",
+    "version": "1.09",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/the-last-of-us-part-ii.pkg",
+    "coverURLString": "cover_lastofus",
+    "bannerURLString": "banner_lastofus",
+    "createdAt": "2026-11-19T12:00:00Z",
+    "updatedAt": "2026-11-19T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "Naughty Dog",
+    "publisher": "Sony Interactive Entertainment",
+    "ageRating": "18+",
+    "rating": 4.9,
+    "ratingCount": 23100,
+    "tags": [
+      "1 Jogador",
+      "PT-BR"
+    ]
+  },
+  {
+    "id": "9ed760ae-6049-5324-a96f-6481bfe7386d",
+    "name": "Red Dead Redemption 2",
+    "description": "Durante a ameaça de extinção do Velho Oeste, Arthur Morgan e a gangue Van der Linde precisam roubar, lutar e sobreviver para seguir em frente em uma América implacável.",
+    "categories": [
+      "aventura",
+      "mundo-aberto",
+      "acao"
+    ],
+    "sizeText": "105.4 GB",
+    "version": "1.29",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/red-dead-redemption-2.pkg",
+    "coverURLString": "cover_rdr",
+    "bannerURLString": "banner_rdr",
+    "createdAt": "2026-11-18T12:00:00Z",
+    "updatedAt": "2026-11-18T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "Rockstar Games",
+    "publisher": "Rockstar Games",
+    "ageRating": "18+",
+    "rating": 4.9,
+    "ratingCount": 41200,
+    "tags": [
+      "1 Jogador",
+      "PT-BR",
+      "Mundo Aberto"
+    ]
+  },
+  {
+    "id": "55c38c77-2341-570b-825f-664b1f908823",
+    "name": "Bloodborne",
+    "description": "Caçador, sua missão é limpar a cidade amaldiçoada de Yharnam, onde uma doença endêmica se alastrou e os habitantes agora se transformam em monstros.",
+    "categories": [
+      "acao",
+      "soulslike"
+    ],
+    "sizeText": "36.2 GB",
+    "version": "1.09",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/bloodborne.pkg",
+    "coverURLString": "cover_bloodborne",
+    "bannerURLString": "banner_ghost",
+    "createdAt": "2026-11-16T12:00:00Z",
+    "updatedAt": "2026-11-16T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "FromSoftware",
+    "publisher": "Sony Computer Entertainment",
+    "ageRating": "18+",
+    "rating": 4.8,
+    "ratingCount": 17800,
+    "tags": [
+      "1 Jogador",
+      "PT-BR",
+      "The Old Hunters"
+    ]
+  },
+  {
+    "id": "ffb7cca7-54e1-5bcd-b94a-5567ceddf47e",
+    "name": "God of War Ragnarök",
+    "description": "Kratos e Atreus partem em uma jornada pelos Nove Reinos. Kratos volta a enfrentar seu passado em uma aventura épica cheia de combates viscerais e emoções familiares.",
+    "categories": [
+      "acao",
+      "rpg",
+      "aventura"
+    ],
+    "sizeText": "84.3 GB",
+    "version": "1.04",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/god-of-war-ragnarök.pkg",
+    "coverURLString": "cover_gow",
+    "bannerURLString": "banner_gow",
+    "createdAt": "2026-11-14T12:00:00Z",
+    "updatedAt": "2026-11-14T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "Santa Monica Studio",
+    "publisher": "Sony Interactive Entertainment",
+    "ageRating": "18+",
+    "rating": 4.9,
+    "ratingCount": 24800,
+    "tags": [
+      "1 Jogador",
+      "PT-BR"
+    ]
+  },
+  {
+    "id": "46fdc872-638a-5a0c-b831-57ae7d16949e",
+    "name": "Marvel's Spider-Man",
+    "description": "Uma nova história no universo do Homem-Aranha. Peter Parker assume a responsabilidade de proteger Nova York enquanto equilibra a vida de herói e o trabalho em um laboratório científico.",
+    "categories": [
+      "acao",
+      "mundo-aberto"
+    ],
+    "sizeText": "45.0 GB",
+    "version": "1.17",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/marvels-spider-man.pkg",
+    "coverURLString": "cover_spiderman",
+    "bannerURLString": "banner_ghost",
+    "createdAt": "2026-11-12T12:00:00Z",
+    "updatedAt": "2026-11-12T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "Insomniac Games",
+    "publisher": "Sony Interactive Entertainment",
+    "ageRating": "14+",
+    "rating": 4.9,
+    "ratingCount": 30100,
+    "tags": [
+      "1 Jogador",
+      "PT-BR"
+    ]
+  },
+  {
+    "id": "de440824-d7bd-5b01-bc9e-aeb6099bde46",
+    "name": "Horizon Forbidden West",
+    "description": "Explore terras distantes, enfrente máquinas maiores e mais imponentes, e encontre novas tribos surpreendentes ao retornar ao futuro distante e pós-apocalíptico de Horizon.",
+    "categories": [
+      "acao",
+      "rpg",
+      "aventura"
+    ],
+    "sizeText": "82.6 GB",
+    "version": "1.15",
+    "downloadURLString": "https://nexus-store.exemplo/pkg/horizon-forbidden-west.pkg",
+    "coverURLString": "cover_horizon",
+    "bannerURLString": "banner_ghost",
+    "createdAt": "2026-11-10T12:00:00Z",
+    "updatedAt": "2026-11-10T12:00:00Z",
+    "isFeatured": false,
+    "platformTag": "PS4",
+    "developer": "Guerrilla Games",
+    "publisher": "Sony Interactive Entertainment",
+    "ageRating": "14+",
+    "rating": 4.9,
+    "ratingCount": 19900,
+    "tags": [
+      "1 Jogador",
+      "PT-BR"
+    ]
+  }
+]
